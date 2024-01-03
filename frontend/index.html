@@ -1,0 +1,71 @@
+<html>
+    <body>
+
+        <form action="/">
+            <input id="email" type="text" value="" />
+            <input id="nom" type="text" value="" />
+            <input id="prenom" type="text" value="" />
+        </form>
+
+        <pre id='json'></pre>
+
+        <script type="text/javascript">
+
+            class State {
+                constructor(initialState) {
+                    // Initialize the state with the provided initialState
+                    this.state = { ...initialState };
+                    // Initialize an array to store change callbacks
+                    this.changeCallbacks = [];
+                }
+
+                getState() {
+                    return { ...this.state };
+                }
+
+                setState(newState) {
+                    // Update the state with the new state
+                    this.state = { ...this.state, ...newState };
+                    // Call all registered callbacks with the updated state
+                    this.changeCallbacks.forEach(callback => callback(this.getState()));
+                }
+
+                onChange(callback) {
+                    // Save the callback to be called when the state changes
+                    this.changeCallbacks.push(callback);
+                }
+            }
+
+            /* DO NOT CHANGE ANYTHING UNDER THIS LINE */
+            const initialState = {
+                email: "david@knx-lab.com",
+                nom: "Quenet",
+                prenom: "David"
+            }
+            var state = new State(initialState);
+
+            ['email', 'prenom', 'nom'].forEach(key => {
+                const htmlElement = document.getElementById(key);
+                htmlElement.value = initialState[key];
+                htmlElement.addEventListener('input', () => {
+                    const newState = {};
+                    newState[key] = htmlElement.value;
+                    state.setState(newState)
+                });
+
+            })
+
+            const jsonHtmlElement = document.getElementById("json");
+            jsonHtmlElement.innerHTML = JSON.stringify(state.getState(), null, 4);
+            state.onChange(state => {
+                jsonHtmlElement.innerHTML = JSON.stringify(state, null, 4);
+            });
+            
+            /* Do not remove this */
+            state.onChange(state => {
+                console.log(state);
+            });
+
+        </script>
+    </body>
+</html>
